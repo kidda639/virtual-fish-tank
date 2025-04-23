@@ -1,0 +1,124 @@
+document.addEventListener('DOMContentLoaded', () => {
+  const welcome = document.getElementById('welcome-screen');
+  const setup = document.getElementById('tank-setup');
+  const tank = document.getElementById('main-tank');
+
+  const conditionerBtn = document.getElementById('add-conditioner');
+  const cycleBtn = document.getElementById('cycle-tank');
+  const testBtn = document.getElementById('test-water');
+
+  const startBtn = document.getElementById('start-btn');
+  const fishSelect = document.getElementById('add-fish-select');
+  const tankDiv = document.getElementById('tank');
+  const fishInfo = document.getElementById('fish-info');
+  const feedBtn = document.getElementById('feed-btn');
+  const setupStatus = document.getElementById('setup-status');
+
+  let tankReady = false;
+  let tankFish = [];
+
+  const fishData = [
+    { name: "Guppy", size: "Small", temperament: "Peaceful", compatibleWith: ["Molly"] },
+    { name: "Molly", size: "Medium", temperament: "Peaceful", compatibleWith: ["Guppy"] }
+  ];
+
+  startBtn.addEventListener('click', () => {
+    welcome.classList.add('hidden');
+    setup.classList.remove('hidden');
+  });
+
+  conditionerBtn.addEventListener('click', () => {
+    setupStatus.textContent = 'Status: Conditioner added. Ready to cycle.';
+    cycleBtn.disabled = false;
+  });
+
+  cycleBtn.addEventListener('click', () => {
+    setupStatus.textContent = 'Status: Cycling...';
+    setTimeout(() => {
+      setupStatus.textContent = 'Status: Tank cycled. You can now test the water.';
+      testBtn.disabled = false;
+    }, 1500);
+  });
+
+  testBtn.addEventListener('click', () => {
+    tankReady = true;
+    setupStatus.textContent = 'Status: Water is perfect!';
+    setup.classList.add('hidden');
+    tank.classList.remove('hidden');
+  });
+
+  fishSelect.addEventListener('change', () => {
+    const value = fishSelect.value;
+    if (!tankReady) {
+      alert('Please prepare the tank first!');
+      fishSelect.value = '';
+      return;
+    }
+    if (value) {
+      const fish = fishData.find(f => f.name === value);
+      if (!fish) return;
+
+      const incompatible = tankFish.find(tf => !fish.compatibleWith.includes(tf.name));
+      if (incompatible) {
+        alert(`${value} is not compatible with ${incompatible.name}!`);
+        fishSelect.value = '';
+        return;
+      }
+
+      tankFish.push(fish);
+      const fishElement = document.createElement('div');
+      fishElement.className = 'fish';
+      fishElement.dataset.name = value;
+      fishElement.style.background = value === 'Guppy' ? '#ff5555' : '#55ff55';
+      tankDiv.appendChild(fishElement);
+      animateFish(fishElement);
+      updateFishInfo();
+      fishSelect.value = '';
+    }
+  });
+
+  feedBtn.addEventListener('click', () => {
+    if (!tankReady) {
+      alert('Tank is not ready!');
+      return;
+    }
+    for (let i = 0; i < 5; i++) {
+      const particle = document.createElement('div');
+      particle.classList.add('food-particle');
+      particle.style.left = `${Math.random() * tankDiv.offsetWidth}px`;
+      tankDiv.appendChild(particle);
+      setTimeout(() => particle.remove(), 5000);
+    }
+
+    document.querySelectorAll('.fish').forEach(fish => {
+      const x = Math.random() * (tankDiv.offsetWidth - 40);
+      const y = Math.random() * (tankDiv.offsetHeight / 2);
+      fish.style.transform = `translate(${x}px, ${y}px)`;
+    });
+  });
+
+  function animateFish(fishElement) {
+    const tankWidth = tankDiv.offsetWidth - 40;
+    const tankHeight = tankDiv.offsetHeight - 20;
+
+    function move() {
+      const x = Math.random() * tankWidth;
+      const y = Math.random() * tankHeight;
+      fishElement.style.transform = `translate(${x}px, ${y}px) scaleX(${Math.random() > 0.5 ? 1 : -1})`;
+      setTimeout(move, 2000 + Math.random() * 3000);
+    }
+    move();
+  }
+
+  function updateFishInfo() {
+    if (tankFish.length === 0) {
+      fishInfo.textContent = 'No fish in the tank.';
+      return;
+    }
+    fishInfo.innerHTML = tankFish.map(fish => `
+      <p><strong>${fish.name}</strong><br>
+      Size: ${fish.size}<br>
+      Temperament: ${fish.temperament}</p>
+    `).join('');
+  }
+});
