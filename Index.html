@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <title>My Virtual Tank</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="apple-touch-icon" href="icon.png" />
+  <link rel="manifest" href="manifest.json" />
+</head>
+<body>
+  <div id="splash-screen">
+    <h1>My Virtual Tank</h1>
+    <p>Loading your aquarium...</p>
+  </div>
+
+  <div id="welcome-screen" class="hidden">
+    <h1>Welcome to My Virtual Tank</h1>
+    <label for="tank-size">Choose Tank Size:</label>
+    <select id="tank-size">
+      <option value="small">Small (10L)</option>
+      <option value="medium" selected>Medium (60L)</option>
+      <option value="large">Large (200L)</option>
+    </select>
+    <br /><br />
+    <button id="start-btn">Let's Begin</button>
+  </div>
+
+  <div id="tank-setup" class="hidden">
+    <h2>Tank Preparation</h2>
+    <p id="setup-status">Status: Preparing tank...</p>
+    <button id="add-conditioner">Add Conditioner</button>
+    <button id="cycle-tank" disabled>Cycle Tank</button>
+    <button id="test-water" disabled>Test Water</button>
+  </div>
+
+  <div id="main-tank" class="hidden">
+    <div id="tank">
+      <div id="corner-rock" title="Tap me!" style="position: absolute; bottom: 10px; left: 10px; width: 30px; height: 30px; background: gray; border-radius: 50%;"></div>
+      <div id="bloop-egg" class="hidden" style="position: absolute; bottom: 40px; left: 40px; width: 20px; height: 20px; background: #ffd700; border-radius: 50%; animation: glow 1s infinite alternate;"></div>
+    </div>
+    <div id="sidebar">
+      <div id="tank-conditions">
+        <p>Temperature: <span id="tank-temp">25°C</span></p>
+        <p>Cleanliness: <span id="tank-cleanliness">100%</span></p>
+      </div>
+      <div id="fish-info">No fish in the tank.</div>
+      <select id="add-fish-select">
+        <option value="">Add a Fish</option>
+        <option value="Guppy">Guppy</option>
+        <option value="Molly">Molly</option>
+        <option value="Neon Tetra">Neon Tetra</option>
+        <option value="Betta">Betta</option>
+        <option value="Platy">Platy</option>
+        <option value="Swordtail">Swordtail</option>
+        <option value="Angelfish">Angelfish</option>
+        <option value="Cory Catfish">Cory Catfish</option>
+        <option value="Danio">Danio</option>
+        <option value="Goldfish">Goldfish</option>
+        <option value="White Cloud Mountain Minnow">White Cloud Mountain Minnow</option>
+      </select>
+      <button id="feed-btn">Feed</button>
+      <button id="clean-btn">Clean Tank</button>
+      <label><input type="checkbox" id="toggle-sound"> Sound On</label>
+      <div id="tank-health">
+        <label>Tank Health</label>
+        <progress value="100" max="100" id="health-bar"></progress>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
