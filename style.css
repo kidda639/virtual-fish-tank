@@ -1,125 +1,259 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const welcome = document.getElementById('welcome-screen');
-  const setup = document.getElementById('tank-setup');
-  const tank = document.getElementById('main-tank');
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  touch-action: manipulation; /* Improves touch responsiveness */
+}
 
-  
-  const conditionerBtn = document.getElementById('add-conditioner');
-  const cycleBtn = document.getElementById('cycle-tank');
-  const testBtn = document.getElementById('test-water');
+body {
+  background: linear-gradient(to bottom, #1e3c72, #2a5298);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
 
-  const startBtn = document.getElementById('start-btn');
-  const fishSelect = document.getElementById('add-fish-select');
-  const tankDiv = document.getElementById('tank');
-  const fishInfo = document.getElementById('fish-info');
-  const feedBtn = document.getElementById('feed-btn');
-  const setupStatus = document.getElementById('setup-status');
+#splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #0077b6;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
 
-  let tankReady = false;
-  let tankFish = [];
+#splash-screen h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
 
-  const fishData = [
-    { name: "Guppy", size: "Small", temperament: "Peaceful", compatibleWith: ["Molly"] },
-    { name: "Molly", size: "Medium", temperament: "Peaceful", compatibleWith: ["Guppy"] }
-  ];
+#splash-screen p {
+  font-size: 1rem;
+}
 
-  startBtn.addEventListener('click', () => {
-    welcome.classList.add('hidden');
-    setup.classList.remove('hidden');
-  });
+.hidden {
+  display: none;
+}
 
-  conditionerBtn.addEventListener('click', () => {
-    setupStatus.textContent = 'Status: Conditioner added. Ready to cycle.';
-    cycleBtn.disabled = false;
-  });
+#welcome-screen {
+  text-align: center;
+  padding: 20px;
+}
 
-  cycleBtn.addEventListener('click', () => {
-    setupStatus.textContent = 'Status: Cycling...';
-    setTimeout(() => {
-      setupStatus.textContent = 'Status: Tank cycled. You can now test the water.';
-      testBtn.disabled = false;
-    }, 1500);
-  });
+#welcome-screen h1 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
 
-  testBtn.addEventListener('click', () => {
-    tankReady = true;
-    setupStatus.textContent = 'Status: Water is perfect!';
-    setup.classList.add('hidden');
-    tank.classList.remove('hidden');
-  });
+#welcome-screen label {
+  font-size: 1rem;
+  margin-right: 10px;
+}
 
-  fishSelect.addEventListener('change', () => {
-    const value = fishSelect.value;
-    if (!tankReady) {
-      alert('Please prepare the tank first!');
-      fishSelect.value = '';
-      return;
-    }
-    if (value) {
-      const fish = fishData.find(f => f.name === value);
-      if (!fish) return;
+#welcome-screen select {
+  padding: 5px;
+  font-size: 1rem;
+  border-radius: 5px;
+}
 
-      const incompatible = tankFish.find(tf => !fish.compatibleWith.includes(tf.name));
-      if (incompatible) {
-        alert(`${value} is not compatible with ${incompatible.name}!`);
-        fishSelect.value = '';
-        return;
-      }
+#welcome-screen button {
+  padding: 12px 24px; /* Larger touch area */
+  font-size: 1rem;
+  background: #4caf50;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 20px;
+}
 
-      tankFish.push(fish);
-      const fishElement = document.createElement('div');
-      fishElement.className = 'fish';
-      fishElement.dataset.name = value;
-      fishElement.style.background = value === 'Guppy' ? '#ff5555' : '#55ff55';
-      tankDiv.appendChild(fishElement);
-      animateFish(fishElement);
-      updateFishInfo();
-      fishSelect.value = '';
-    }
-  });
+#tank-setup {
+  text-align: center;
+  padding: 20px;
+}
 
-  feedBtn.addEventListener('click', () => {
-    if (!tankReady) {
-      alert('Tank is not ready!');
-      return;
-    }
-    for (let i = 0; i < 5; i++) {
-      const particle = document.createElement('div');
-      particle.classList.add('food-particle');
-      particle.style.left = `${Math.random() * tankDiv.offsetWidth}px`;
-      tankDiv.appendChild(particle);
-      setTimeout(() => particle.remove(), 5000);
-    }
+#tank-setup h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
 
-    document.querySelectorAll('.fish').forEach(fish => {
-      const x = Math.random() * (tankDiv.offsetWidth - 40);
-      const y = Math.random() * (tankDiv.offsetHeight / 2);
-      fish.style.transform = `translate(${x}px, ${y}px)`;
-    });
-  });
+#tank-setup p {
+  margin-bottom: 10px;
+}
 
-  function animateFish(fishElement) {
-    const tankWidth = tankDiv.offsetWidth - 40;
-    const tankHeight = tankDiv.offsetHeight - 20;
+#tank-setup button {
+  padding: 10px 20px; /* Larger touch area */
+  margin: 5px;
+  font-size: 0.9rem;
+  background: #2196f3;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 5px;
+}
 
-    function move() {
-      const x = Math.random() * tankWidth;
-      const y = Math.random() * tankHeight;
-      fishElement.style.transform = `translate(${x}px, ${y}px) scaleX(${Math.random() > 0.5 ? 1 : -1})`;
-      setTimeout(move, 2000 + Math.random() * 3000);
-    }
-    move();
+#tank-setup button:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+
+#main-tank {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 80vh;
+  background: #000;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#tank {
+  flex: 2;
+  background: linear-gradient(to bottom, #00b7eb, #0077b6), url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAJElEQVR4AWMwMjIyYGBgYGBgYGBgYOBgYGBgYGBgYGBgYGBgAABu4gH6wT5V7wAAAABJRU5ErkJggg=='); /* Subtle gravel texture */
+  background-blend-mode: overlay;
+  position: relative;
+  overflow: hidden;
+}
+
+#sidebar {
+  flex: 1;
+  background: #f4f4f4;
+  color: #333;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+#tank-conditions {
+  background: #e0e0e0;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+#tank-conditions p {
+  font-size: 0.9rem;
+  margin: 5px 0;
+}
+
+#fish-info {
+  flex-grow: 1;
+  overflow-y: auto;
+  background: #fff;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+#fish-info p {
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+#sidebar select,
+#sidebar button {
+  padding: 10px; /* Larger touch area */
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#sidebar select {
+  background: #fff;
+}
+
+#sidebar button {
+  background: #ff9800;
+  color: #fff;
+}
+
+#clean-btn {
+  background: #4caf50;
+}
+
+#tank-health progress {
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+}
+
+.fish {
+  position: absolute;
+  width: 40px;
+  height: 20px;
+  border-radius: 50% 50% 30% 30%;
+  transition: transform 0.5s ease;
+}
+
+.food-particle {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: #f4a261;
+  border-radius: 50%;
+  animation: fall 5s linear forwards;
+}
+
+@keyframes fall {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100vh); }
+}
+
+.bloop-tip {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  box-shadow: 0 0 10px #000;
+  animation: fadein 0.5s ease;
+  z-index: 1000;
+}
+
+@keyframes fadein {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 5px #ffd700; }
+  to { box-shadow: 0 0 15px #ffd700; }
+}
+
+@media (max-width: 768px) {
+  #welcome-screen h1 {
+    font-size: 1.5rem;
   }
 
-  function updateFishInfo() {
-    if (tankFish.length === 0) {
-      fishInfo.textContent = 'No fish in the tank.';
-      return;
-    }
-    fishInfo.innerHTML = tankFish.map(fish => `
-      <p><strong>${fish.name}</strong><br>
-      Size: ${fish.size}<br>
-      Temperament: ${fish.temperament}</p>
-    `).join('');
+  #tank-setup h2 {
+    font-size: 1.3rem;
   }
-});
+
+  #main-tank {
+    height: 90vh;
+  }
+
+  #tank {
+    flex: 3;
+  }
+
+  #sidebar {
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  #fish-info {
+    max-height: 100px;
+  }
+}
